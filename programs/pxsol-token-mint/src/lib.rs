@@ -1,101 +1,256 @@
+#![allow(unexpected_cfgs)]
 use anchor_lang::prelude::*;
-use anchor_spl::associated_token::AssociatedToken;
-use anchor_spl::token_interface;
-use anchor_spl::token_interface::{Mint, MintTo, TokenAccount, TokenInterface};
+use anchor_spl::token_interface::{self, Mint, Token2022, InitializeMint2};
 
-mod constants;
-mod instructions;
+pub mod constants;
+use constants::*;
+// pub mod instructions;
+// use instructions::*;
 
-declare_id!("BhkievnqGWsuX537hQPNDZGeBnZDffMnVBxHUHBfcNNt");
+declare_id!("8H5aRtSrNcF3TbrfPpV7UUYa57HKBy4syKqvADvHhiSk");
 
 #[program]
 pub mod pxsol_token_mint {
     use super::*;
 
-    pub fn create_mint(ctx: Context<CreateMint>) -> Result<()> {
-        msg!("Created Mint Account: {:?}", ctx.accounts.mint.key());
+    pub fn init_pxsol(ctx: Context<InitializePxSOL>) -> Result<()> {
+        if ctx.accounts.mint_pxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_pxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS, // Token decimals
+                &ctx.accounts.admin.key(), // Mint authority
+                Some(&ctx.accounts.admin.key()), // freeze authority
+            )?;
+        }
+
+        // Set token metadata (this part requires token-2022 extension support)
+        let _metadata = format!("pxSOL - Liquid Staking Token");
+
         Ok(())
     }
 
-    pub fn create_token_account(ctx: Context<CreateTokenAccount>) -> Result<()> {
-        msg!(
-            "Created Token Account: {:?}",
-            ctx.accounts.token_account.key()
-        );
+    pub fn init_apxsol(ctx: Context<InitializeApxSOL>) -> Result<()> {
+        if ctx.accounts.mint_apxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_apxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS,
+                &ctx.accounts.admin.key(),
+                Some(&ctx.accounts.admin.key()),
+            )?;
+        }
+
+        let _metadata = format!("apxSOL - Liquid Staking Token");
+
         Ok(())
     }
 
-    pub fn mint_tokens(ctx: Context<MintTokens>, amount: u64) -> Result<()> {
-        let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[ctx.bumps.mint]]];
- 
-        let cpi_accounts = MintTo {
-            mint: ctx.accounts.mint.to_account_info(),
-            to: ctx.accounts.token_account.to_account_info(),
-            authority: ctx.accounts.mint.to_account_info(),
-        };
-        let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_context = CpiContext::new(cpi_program, cpi_accounts).with_signer(signer_seeds);
+    pub fn init_upxsol(ctx: Context<InitializeUpxSOL>) -> Result<()> {
+        if ctx.accounts.mint_upxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_upxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS,
+                &ctx.accounts.admin.key(),
+                Some(&ctx.accounts.admin.key()),
+            )?;
+        }
 
-        token_interface::mint_to(cpi_context, amount)?;
+        let _metadata = format!("upxSOL - Liquid Staking Token");
+
+        Ok(())
+    }
+
+    pub fn init_ipxsol(ctx: Context<InitializeIpxSOL>) -> Result<()> {
+        if ctx.accounts.mint_ipxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_ipxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS,
+                &ctx.accounts.admin.key(),
+                Some(&ctx.accounts.admin.key()),
+            )?;
+        }
+
+        let _metadata = format!("ipxSOL - Liquid Staking Token");
+
+        Ok(())
+    }
+
+    pub fn init_iapxsol(ctx: Context<InitializeIapxSOL>) -> Result<()> {
+        if ctx.accounts.mint_iapxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_iapxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS,
+                &ctx.accounts.admin.key(),
+                Some(&ctx.accounts.admin.key()),
+            )?;
+        }
+
+        let _metadata = format!("iapxSOL - Liquid Staking Token");
+
+        Ok(())
+    }
+
+    pub fn init_iupxsol(ctx: Context<InitializeIupxSOL>) -> Result<()> {
+        if ctx.accounts.mint_iupxsol.to_account_info().data_is_empty() {
+            token_interface::initialize_mint2(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    InitializeMint2 {
+                        mint: ctx.accounts.mint_iupxsol.to_account_info(),
+                    },
+                ),
+                MINT_DECIMALS,
+                &ctx.accounts.admin.key(),
+                Some(&ctx.accounts.admin.key()),
+            )?;
+        }
+
+        let _metadata = format!("iupxSOL - Liquid Staking Token");
+
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct CreateMint<'info> {
+pub struct InitializePxSOL<'info> {
     #[account(mut)]
-    pub signer: Signer<'info>,
+    pub admin: Signer<'info>,
+    
     #[account(
         init_if_needed,
-        payer = signer,
-        mint::decimals = 6,
-        mint::authority = mint.key(),
-        mint::freeze_authority = mint.key(),
-        seeds = [b"mint"],
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [PX_SOL_TOKEN_MINT.as_bytes()],
         bump
     )]
-    pub mint: InterfaceAccount<'info, Mint>,
-    pub token_program: Interface<'info, TokenInterface>,
+    pub mint_pxsol: InterfaceAccount<'info, Mint>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
 }
 
 #[derive(Accounts)]
-pub struct CreateTokenAccount<'info> {
+pub struct InitializeApxSOL<'info> {
     #[account(mut)]
-    pub signer: Signer<'info>,
-    #[account(
-        init_if_needed,
-        payer = signer,
-        associated_token::mint = mint,
-        associated_token::authority = signer,
-        associated_token::token_program = token_program,
-    )]
-    pub token_account: InterfaceAccount<'info, TokenAccount>,
-    pub mint: InterfaceAccount<'info, Mint>,
-    pub token_program: Interface<'info, TokenInterface>,
-    pub associated_token_program: Program<'info, AssociatedToken>,
-    pub system_program: Program<'info, System>,
-}
+    pub admin: Signer<'info>,
 
-#[derive(Accounts)]
-pub struct MintTokens<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
     #[account(
         init_if_needed,
-        payer = signer,
-        associated_token::mint = mint,
-        associated_token::authority = signer,
-        associated_token::token_program = token_program,
-    )]
-    pub token_account: InterfaceAccount<'info, TokenAccount>,
-    #[account(
-        mut,
-        seeds = [b"mint"],
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [APX_SOL_TOKEN_MINT.as_bytes()],
         bump
     )]
-    pub mint: InterfaceAccount<'info, Mint>,
-    pub token_program: Interface<'info, TokenInterface>,
-    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub mint_apxsol: InterfaceAccount<'info, Mint>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeUpxSOL<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [UPX_SOL_TOKEN_MINT.as_bytes()],
+        bump
+    )]
+    pub mint_upxsol: InterfaceAccount<'info, Mint>,
+
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeIpxSOL<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [IPX_SOL_TOKEN_MINT.as_bytes()],
+        bump
+    )]
+    pub mint_ipxsol: InterfaceAccount<'info, Mint>,
+
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeIapxSOL<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [IAPX_SOL_TOKEN_MINT.as_bytes()],
+        bump
+    )]
+    pub mint_iapxsol: InterfaceAccount<'info, Mint>,
+
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeIupxSOL<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = admin,
+        mint::decimals = MINT_DECIMALS,
+        mint::authority = admin.key(),
+        mint::freeze_authority = admin.key(),
+        seeds = [IUPX_SOL_TOKEN_MINT.as_bytes()],
+        bump
+    )]
+    pub mint_iupxsol: InterfaceAccount<'info, Mint>,
+
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token2022>,
 }

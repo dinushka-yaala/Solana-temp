@@ -7,90 +7,50 @@ import {
   getAssociatedTokenAddress,
   getAccount,
 } from "@solana/spl-token";
+import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { assert } from "chai";
 
 describe("pxsol-token-mint", () => {
   // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
-
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
   const program = anchor.workspace.PxsolTokenMint as Program<PxsolTokenMint>;
-  const [mint, bump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("mint")],
-    program.programId
-  );
-  const [token, tokenBump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("token")],
-    program.programId,
-  );
 
-  it("Create a mint account", async () => {
-    const tx = await program.methods
-      .createMint()
-      .accounts({
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
-      })
-      .rpc({ commitment: "confirmed" })
-    console.log("Your transaction signature:\n", tx);
+  let authority = provider.wallet.publicKey;
+  let mintAccounts: { [key: string]: PublicKey } = {};
+  const seeds = ["pxSOL", "apxSOL", "upxSOL", "ipxSOL", "iapxSOL", "iupxSOL"];
+  const tokenNames = ["Pxsol", "Apxsol", "Upxsol", "Ipxsol", "Iapxsol", "Iupxsol"];
 
-    const mintAccount = await getMint(
-      program.provider.connection,
-      mint,
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    console.log("Mint account :\n", mintAccount);
+  before(async () => {
+    console.log("Program ID:", program.programId.toString());
+    // Generate mint accounts
+    seeds.forEach((seed, index) => {
+      const [accountKey, _] = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from(seed)], program.programId);
+      mintAccounts[tokenNames[index]] = accountKey;
+      console.log(`${seed} Mint Account:`, mintAccounts[tokenNames[index]].toString());
+    });
   });
 
-  it("Create an associated token account", async () => {
-    const tx = await program.methods
-      .createTokenAccount()
-      .accounts({
-        mint: mint,
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
-      })
-      .rpc({ commitment: "confirmed" })
-    console.log("Your transaction signature:\n", tx);
+  for (const [index, token] of tokenNames.entries()) {
+    it(`Initializes ${token} mint`, async () => {
+      await program.methods[`init${token}`]()
+        .accounts({
+          admin: provider.wallet.publicKey,
+          [`mint${token}`]: mintAccounts[token],
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_2022_PROGRAM_ID,
+        })
+        .rpc({ commitment: "confirmed" });
 
-    const associatedTokenAccount = await getAssociatedTokenAddress(
-      mint,
-      program.provider.publicKey,
-      false,
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    const tokenAccount = await getAccount(
-      program.provider.connection,
-      associatedTokenAccount,
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    console.log("Token account :\n", tokenAccount);
-  });
-
-  it("Mint new tokens", async () => {
-    const tx = await program.methods
-      .mintTokens(new anchor.BN(100000000))
-      .accounts({
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
-      })
-      .rpc({ commitment: "confirmed" })
-    console.log("Your transaction signature:\n", tx);
-
-    const associatedTokenAccount = await getAssociatedTokenAddress(
-      mint,
-      program.provider.publicKey,
-      false,
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    const tokenAccount = await getAccount(
-      program.provider.connection,
-      associatedTokenAccount,
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID
-    );
-
-    console.log("Tokens minted to account :\n", tokenAccount);
-  });
+      // Validate mint account
+      const mintAccount = await getMint(
+        program.provider.connection,
+        mintAccounts[token],
+        "confirmed",
+        TOKEN_2022_PROGRAM_ID
+      );
+      assert.ok(mintAccount);
+      console.log("Mint account :\n", mintAccount);
+    });
+  }
 });
