@@ -1,0 +1,91 @@
+Deploying cluster: http://127.0.0.1:8899
+Upgrade authority: /home/dinushka/.config/solana/id.json
+Deploying program "pxsol_token_mint"...
+Program path: /home/dinushka/RustPlayground/pxsol-token-mint/target/deploy/pxsol_token_mint.so...
+Program Id: BhkievnqGWsuX537hQPNDZGeBnZDffMnVBxHUHBfcNNt
+
+Signature: 4sEiLX8ynjZFwxEFcK2d7iJ59Snas8aMXYspCYMSDnqTCYNbjxW3ZocZ81sTiHRnfEoXUKXtgLsLXw59EtqD4RKY
+
+Deploy success
+
+Found a 'test' script in the Anchor.toml. Running it as a test suite!
+
+Running test suite: "/home/dinushka/RustPlayground/pxsol-token-mint/Anchor.toml"
+
+yarn run v1.22.22
+$ /home/dinushka/RustPlayground/pxsol-token-mint/node_modules/.bin/ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.ts'
+
+
+  pxsol-token-mint
+Your transaction signature:
+ 5AfmYBmb1WsZoSpJxEpv8Y2wuT2ah6NLRy1g3xWnGFiqj7THoMNG3aE1qDTVWsVEBhURf8nMJ8W7KEtcA1BsFUrJ
+Mint account :
+ {
+  address: PublicKey [PublicKey(FD5L9g8o6nfFnRkeCiyxzzsL2phdufCGraMgqztc4mZ1)] {
+    _bn: <BN: d31b7b997eb8170ee490f76e609e22210203be62dad205f6f77565890d833738>
+  },
+  mintAuthority: PublicKey [PublicKey(FD5L9g8o6nfFnRkeCiyxzzsL2phdufCGraMgqztc4mZ1)] {
+    _bn: <BN: d31b7b997eb8170ee490f76e609e22210203be62dad205f6f77565890d833738>
+  },
+  supply: 0n,
+  decimals: 6,
+  isInitialized: true,
+  freezeAuthority: PublicKey [PublicKey(FD5L9g8o6nfFnRkeCiyxzzsL2phdufCGraMgqztc4mZ1)] {
+    _bn: <BN: d31b7b997eb8170ee490f76e609e22210203be62dad205f6f77565890d833738>
+  },
+  tlvData: <Buffer >
+}
+    ✔ Create a mint account (209ms)
+Your transaction signature:
+ 45nZfJGT3afMnPsCfNVVQBheZbMGfqLw1ZeDaoBFiP36ASBXhDu7FfcgkbJNR1AdSeG8EaUKtSzpG3xbahQ9KyqW
+Token account :
+ {
+  address: PublicKey [PublicKey(4rrYp9SJNNexJp2jaXUM87VVi6kmJiohzj9ab1jx1VNz)] {
+    _bn: <BN: 39588b8aea2b407eda8807ef1834071e7c428c1e4e8d5e3d946338df58c1759b>
+  },
+  mint: PublicKey [PublicKey(FD5L9g8o6nfFnRkeCiyxzzsL2phdufCGraMgqztc4mZ1)] {
+    _bn: <BN: d31b7b997eb8170ee490f76e609e22210203be62dad205f6f77565890d833738>
+  },
+  owner: PublicKey [PublicKey(Fdir7q1B1LwDaJfQrfUyQNzkedzxLHFd214te9VHzGiC)] {
+    _bn: <BN: d96bd7ad49dec57ffc75c92d03f33645cc435481dd2b45c28614ed8135cd2f59>
+  },
+  amount: 0n,
+  delegate: null,
+  delegatedAmount: 0n,
+  isInitialized: true,
+  isFrozen: false,
+  isNative: false,
+  rentExemptReserve: null,
+  closeAuthority: null,
+  tlvData: <Buffer 07 00 00 00>
+}
+    ✔ Create an associated token account (418ms)
+Your transaction signature:
+ 51KsWByJLoWnb4n5o43m1T6uzY1j6gwob8gkTeWPAPwSBWvUa5PkscjZ17GUUtykJya8naBKtWAXZJULQR3x65oG
+Tokens minted to account :
+ {
+  address: PublicKey [PublicKey(4rrYp9SJNNexJp2jaXUM87VVi6kmJiohzj9ab1jx1VNz)] {
+    _bn: <BN: 39588b8aea2b407eda8807ef1834071e7c428c1e4e8d5e3d946338df58c1759b>
+  },
+  mint: PublicKey [PublicKey(FD5L9g8o6nfFnRkeCiyxzzsL2phdufCGraMgqztc4mZ1)] {
+    _bn: <BN: d31b7b997eb8170ee490f76e609e22210203be62dad205f6f77565890d833738>
+  },
+  owner: PublicKey [PublicKey(Fdir7q1B1LwDaJfQrfUyQNzkedzxLHFd214te9VHzGiC)] {
+    _bn: <BN: d96bd7ad49dec57ffc75c92d03f33645cc435481dd2b45c28614ed8135cd2f59>
+  },
+  amount: 100000000n,
+  delegate: null,
+  delegatedAmount: 0n,
+  isInitialized: true,
+  isFrozen: false,
+  isNative: false,
+  rentExemptReserve: null,
+  closeAuthority: null,
+  tlvData: <Buffer 07 00 00 00>
+}
+    ✔ Mint new tokens (421ms)
+
+
+  3 passing (1s)
+
+Done in 2.69s.
